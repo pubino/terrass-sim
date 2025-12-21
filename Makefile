@@ -71,6 +71,24 @@ $(JAR_FILE): $(SOURCES)
 	@echo "=== Creating JAR file ==="
 	cd $(BUILD_DIR) && $(JAR) cfe $(JAR_FILE) $(MAIN_CLASS) terrass/ myutil/
 	@echo "Build complete: $(JAR_FILE)"
+	@read -p "Would you like to run the application? [y/N] " answer; \
+	if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
+		if command -v java >/dev/null 2>&1; then \
+			echo "=== Running $(JAR_FILE) ==="; \
+			java -jar $(JAR_FILE); \
+		else \
+			echo "Error: Java not found in PATH"; \
+			echo ""; \
+			echo "To install Java via Homebrew:"; \
+			echo "  brew install openjdk"; \
+			echo ""; \
+			echo "Or install a specific version:"; \
+			echo "  brew install openjdk@21"; \
+			echo ""; \
+			echo "After installation, you may need to add it to your PATH:"; \
+			echo "  echo 'export PATH=\"/opt/homebrew/opt/openjdk/bin:\$$PATH\"' >> ~/.zshrc"; \
+		fi \
+	fi
 
 # Build macOS .app bundle (unsigned)
 .PHONY: app
@@ -92,6 +110,11 @@ $(APP_BUNDLE): $(JAR_FILE)
 		--mac-package-name "$(DISPLAY_NAME)" \
 		--java-options "-Xmx512m"
 	@echo "App bundle created: $(APP_BUNDLE)"
+	@read -p "Would you like to run the application? [y/N] " answer; \
+	if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
+		echo "=== Running $(APP_BUNDLE) ==="; \
+		open $(APP_BUNDLE); \
+	fi
 
 # Sign and notarize for distribution
 .PHONY: sign
