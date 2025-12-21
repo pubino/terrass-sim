@@ -1,8 +1,6 @@
 package myutil;
 
 import java.awt.*;
-import java.applet.*;
-import java.awt.image.*;
 import java.awt.FontMetrics.*;
 import java.awt.FontMetrics;
 import java.awt.Font.*;

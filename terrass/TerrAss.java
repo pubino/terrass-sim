@@ -1,11 +1,9 @@
 package terrass;
 
 import java.awt.*;
-import java.applet.*;
 import java.awt.image.*;
 import java.util.*;
 import java.io.*;
-import java.net.*;
 import java.text.*;
 import java.lang.Math.*;
 import java.lang.reflect.*;
@@ -16,7 +14,7 @@ import myutil.Sort;
 import myutil.Search;
 import myutil.Memory;
 
-final public class TerrAss extends Applet
+final public class TerrAss extends Panel implements SimApp
 {
     TextField M;
     TextField BIAS_START;
@@ -30,8 +28,6 @@ final public class TerrAss extends Applet
     TextField LATMIN, LATMAX, LONMIN, LONMAX;
     TextArea outputArea;
 
-    URL codebase;
-
     TerrAssCanvas tac;
 
     public static void main(String[] args) {
@@ -40,7 +36,6 @@ final public class TerrAss extends Applet
 
     public void init()
     {
-	codebase = getCodeBase();
         setLayout(new FlowLayout(FlowLayout.LEFT));
         setBackground(Color.gray);
 
@@ -92,6 +87,10 @@ final public class TerrAss extends Applet
 
         validate();
         setVisible(true);
+    }
+
+    public void start() {
+        // No-op for this simulation
     }
 
     void clearOutput() {
@@ -154,8 +153,6 @@ final class TerrAssCanvas extends Canvas
     int paint_flag=0;
     Graphics g;
 
-    URL codebase;
-
     public TerrAssCanvas(TerrAss parent)
     {
 	this.parent = parent;
@@ -183,8 +180,6 @@ final class TerrAssCanvas extends Canvas
         latmax = SL.atof(parent.LATMAX.getText());
         lonmin = SL.atof(parent.LONMIN.getText());
         lonmax = SL.atof(parent.LONMAX.getText());
-
-	codebase = parent.codebase;
 
 	if (!read_data( params )) {
 	    parent.appendOutput("Error: Required data files not found.");
