@@ -24,6 +24,20 @@ The algorithm balances territories to have equal "weight" (e.g., population, sal
 - Java 14+ (for running the JAR)
 - Java 14+ with `jpackage` (for building macOS app bundle)
 
+## Data Files Required
+
+This application requires geographic data files that are not included in the repository:
+
+- **zlls.dat**: ZIP code latitude/longitude data file containing:
+  - Number of records (integer)
+  - For each record: ZIP code, latitude, longitude, state code
+
+- **zta.dat**: ZIP-to-territory assignment data containing:
+  - Number of records (integer)
+  - For each record: ZIP code, territory ID, attribute value (e.g., population)
+
+Place these files in the current working directory before running the application.
+
 ## Building
 
 ```bash

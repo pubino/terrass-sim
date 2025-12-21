@@ -162,7 +162,8 @@ final class TerrAssCanvas extends Canvas
 	paint_flag=0;
     }
 
-    private Thread animate;
+    private volatile Thread animate;
+    private volatile boolean running = false;
     private boolean ginited=false;
 
     public void start()
@@ -185,19 +186,25 @@ final class TerrAssCanvas extends Canvas
 
 	codebase = parent.codebase;
 
-	read_data( params );
+	if (!read_data( params )) {
+	    parent.appendOutput("Error: Required data files not found.");
+	    parent.appendOutput("Please ensure zlls.dat and zta.dat are in the current directory.");
+	    return;
+	}
 
         genprob();
 
+	running = true;
 	animate = new Thread( this );
 	animate.start();
     }
 
     public void stop()
     {
-	    System.out.println("stopping");
+	    parent.appendOutput("Stopping...");
+	    running = false;
             if (animate != null) {
-                animate.stop();
+                animate.interrupt();
                 animate = null;
             }
     }
@@ -501,7 +508,7 @@ final class TerrAssCanvas extends Canvas
     // and TERRDATA array t.
     // *********************************************************
 
-    void read_data( PARAMS params)
+    boolean read_data( PARAMS params)
     {
 	int i, j, k;
 	String terr;
@@ -517,7 +524,7 @@ final class TerrAssCanvas extends Canvas
 	try { in = new DataInputStream(
 		   new BufferedInputStream(
 		   new FileInputStream("zlls.dat"))); }
-	catch (IOException fe){System.err.println("File not found"); return;}
+	catch (IOException fe){parent.appendOutput("File zlls.dat not found"); return false;}
 
 	n = FileIO.readInt(in);
 	z = new ZIPDATA[n];
@@ -555,7 +562,7 @@ final class TerrAssCanvas extends Canvas
 	try { in = new DataInputStream(
 		   new BufferedInputStream(
 		   new FileInputStream("zta.dat"))); }
-	catch (IOException fe){System.err.println("File not found"); return;}
+	catch (IOException fe){parent.appendOutput("File zta.dat not found"); return false;}
 
 	int n2 = FileIO.readInt(in);
 
@@ -572,6 +579,7 @@ final class TerrAssCanvas extends Canvas
 		//System.err.println(zip+" in zta.dat not found in zlls.dat");
 	    }
 	}
+	return true;
     }
 
     void computecentroid( int i )
