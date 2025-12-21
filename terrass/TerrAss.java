@@ -28,13 +28,14 @@ final public class TerrAss extends Applet
     TextField DIST_FORMAT;
     TextField TERR_FORMAT;
     TextField LATMIN, LATMAX, LONMIN, LONMAX;
+    TextArea outputArea;
 
     URL codebase;
 
     TerrAssCanvas tac;
 
     public static void main(String[] args) {
-	    new AppletFrame(new TerrAss(), 620, 800);
+	    new AppletFrame(new TerrAss(), 620, 950);
     }
 
     public void init()
@@ -83,8 +84,22 @@ final public class TerrAss extends Applet
         tac = new TerrAssCanvas(this);
         add(tac);
         tac.setSize(600,600);
+
+        outputArea = new TextArea("", 8, 70, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        outputArea.setEditable(false);
+        outputArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        add(outputArea);
+
         validate();
         setVisible(true);
+    }
+
+    void clearOutput() {
+        outputArea.setText("");
+    }
+
+    void appendOutput(String text) {
+        outputArea.append(text + "\n");
     }
 
     public void stop()
@@ -97,6 +112,7 @@ final public class TerrAss extends Applet
 	double steplen, strength;
 	String filename;
 	if (arg.equals("Start")) {
+	    clearOutput();
 	    tac.stop();
 	    tac.start();
 	} else if (arg.equals("Stop")) {
@@ -1498,7 +1514,7 @@ final class TerrAssCanvas extends Canvas
 	  wt = bias * bobj/dobj;
 
 	  while( bias >= params.bias_end ) {
-	    System.out.println("bias = " + bias);
+	    parent.appendOutput("bias = " + bias);
 	    obj = HUGE_VAL;
 	    do {
 		changes=0;
@@ -1508,7 +1524,7 @@ final class TerrAssCanvas extends Canvas
 
 		changes  = rebalance(n, m, wt, target, params);
 
-		System.out.println("changes = " + changes);
+		parent.appendOutput("changes = " + changes);
 
 	    } while (changes>params.nchanges);
 
