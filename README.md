@@ -113,7 +113,3 @@ The territory assignment algorithm:
    - Objective balances territory weights against geographic compactness
 4. **Bias Reduction**: Gradually reduces bias to emphasize balance over compactness
 5. **Termination**: Stops when changes fall below threshold
-
-## License
-
-Based on original work by Robert Vanderbei, Princeton University.
