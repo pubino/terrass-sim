@@ -13,7 +13,7 @@ implements AppletStub, AppletContext
 {
     public AppletFrame(Applet a, int x, int y)
     {
-	setTitle("Territory Assignment");
+	setTitle("Territory Assignment Optimizer");
 	resize(x,y);
 	add("Center", a);
 	a.setStub(this);
