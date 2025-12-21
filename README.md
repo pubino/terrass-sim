@@ -1,5 +1,7 @@
 # Territory Assignment Optimizer
 
+Part of [Vanderbei's Java Simulations](https://github.com/pubino/vanderbei-apps) collection.
+
 A Java application for optimizing territory assignments using space-filling curves and local improvement heuristics. Originally based on Robert Vanderbei's work from Princeton University.
 
 ## Overview
