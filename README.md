@@ -1,6 +1,6 @@
 # Territory Assignment Optimizer
 
-Part of [Prof. Robert Vanderbei's Java Applications](https://pubino.github.io/vanderbei-apps).
+Part of [Prof. Robert Vanderbei's Java Applications](https://pubino.github.io/vanderbei-apps#terrass-sim).
 
 A Java application for optimizing territory assignments using space-filling curves and local improvement heuristics. Originally based on Robert Vanderbei's work from Princeton University.
 
