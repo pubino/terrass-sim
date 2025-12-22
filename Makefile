@@ -16,6 +16,21 @@
 
 SHELL := /bin/bash
 
+# Check for Java availability (actually test javac, not just if it exists)
+JAVA_WORKS := $(shell javac -version 2>&1 | grep -q "javac" && echo yes)
+
+.PHONY: check-java
+check-java:
+ifneq ($(JAVA_WORKS),yes)
+	@echo "Error: Java compiler (javac) not found."
+ifeq ($(shell uname),Darwin)
+	@echo "Install Java on macOS with brew install openjdk and add it to your PATH."
+else
+	@echo "Please install a Java Development Kit (JDK)."
+endif
+	@exit 1
+endif
+
 # Directories
 PROJECT_DIR := $(shell pwd)
 BUILD_DIR := $(PROJECT_DIR)/build
@@ -62,7 +77,7 @@ all: jar
 
 # Compile Java sources and create JAR
 .PHONY: jar
-jar: $(JAR_FILE)
+jar: check-java $(JAR_FILE)
 
 $(JAR_FILE): $(SOURCES)
 	@echo "=== Compiling Java sources ==="
