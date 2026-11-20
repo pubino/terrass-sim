@@ -24,3 +24,12 @@
 # Temporary files
 *.tmp
 *~
+
+# Browser development
+.venv/
+.env*
+node_modules/
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+*.db

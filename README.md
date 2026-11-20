@@ -4,12 +4,48 @@ Part of [Prof. Robert Vanderbei's Java Applications](https://pubino.github.io/va
 
 A Java application for optimizing territory assignments using space-filling curves and local improvement heuristics. Originally based on Robert Vanderbei's work from Princeton University.
 
+## Run in your browser
+
+[Open Territory Assignment](https://pubino.github.io/terrass-sim/). The default
+run loads 41,352 historical ZIP locations and divides them into 500 territories.
+Choose a territory below the map to see its ZIP count and weight against the target.
+Change the number of territories, bias schedule, or geographic bounds, then
+select **Optimize**. Select **Stop** to cancel an in-progress run.
+
+The Python model runs in a Pyodide worker. It ports the Java projection,
+space-filling curve, boundary reassignment, and territory center updates. The
+browser uses Java's pseudorandom generator with an editable seed (default 524).
+It orders exact curve-hash ties by descending ZIP code so a seed is
+reproducible. The original Java orders those ties by object identity.
+
+The build verifies and packages the historical inputs from the
+[original Princeton applet](https://vanderbei.princeton.edu/JAVA/terrass/).
+You can also load local copies of these file formats. Local files stay in the
+browser. Omit the optional adjacency file to generate a network using the
+original four-pass method.
+
+### Browser development
+
+```sh
+docker-compose run --build --rm -T js-check
+docker-compose run --build --rm -T test
+docker-compose up --build preview
+```
+
+The preview serves http://localhost:8000. The tests compare all historical
+assignments, center coordinates, directed adjacency, and optimization passes
+with the original Java solver. They also exercise browser startup, cancellation,
+and local files. For native development, use `uv sync --locked --python 3.13.12`,
+`uv run playwright install --only-shell chromium`, and
+`uv run python scripts/build_site.py` before running
+`uv run python -m unittest discover -s tests -v` with JDK 25 on your path.
+
 ## Overview
 
 This application solves the territory assignment problem: dividing a geographic region into balanced territories based on specified criteria. It uses:
 
 - **Space-filling curves**: Orders geographic points along a continuous curve that preserves locality
-- **Local improvement heuristics**: Iteratively swaps assignments to improve balance and compactness
+- **Local improvement heuristics**: Iteratively reassigns ZIPs to improve balance and compactness
 
 The algorithm balances territories to have equal "weight" (e.g., population, sales potential) while minimizing geographic dispersion.
 
@@ -28,17 +64,19 @@ The algorithm balances territories to have equal "weight" (e.g., population, sal
 
 ## Data Files Required
 
-This application requires geographic data files that are not included in the repository:
+The Java application reads these whitespace-delimited files from the current
+working directory. Each starts with a record count.
 
-- **zlls.dat**: ZIP code latitude/longitude data file containing:
-  - Number of records (integer)
-  - For each record: ZIP code, latitude, longitude, state code
+| File | Fields |
+| --- | --- |
+| [zlls.dat](https://vanderbei.princeton.edu/JAVA/terrass/zlls.dat) | ZIP, latitude, longitude, state code |
+| [zta.dat](https://vanderbei.princeton.edu/JAVA/terrass/zta.dat) | ZIP, historical territory ID, weight |
+| [mknet/arcs.dat](https://vanderbei.princeton.edu/JAVA/terrass/mknet/arcs.dat) | Source ZIP, neighboring ZIP (optional) |
 
-- **zta.dat**: ZIP-to-territory assignment data containing:
-  - Number of records (integer)
-  - For each record: ZIP code, territory ID, attribute value (e.g., population)
-
-Place these files in the current working directory before running the application.
+Keep leading zeros in ZIPs and list locations in ZIP order for the Java
+algorithm's adjacency indexing. Geographic bounds are exclusive. Java replaces
+missing and zero weights with 0.001 and optimizes new territory assignments
+starting from the space-filling order.
 
 ## Building
 
@@ -111,7 +149,7 @@ The territory assignment algorithm:
 2. **Initial Assignment**: Divides ordered points into equal-weight segments
 3. **Local Improvement**:
    - Identifies boundary points between territories
-   - Evaluates swapping assignments to improve objective
+   - Evaluates moving one ZIP at a time to improve the objective
    - Objective balances territory weights against geographic compactness
 4. **Bias Reduction**: Gradually reduces bias to emphasize balance over compactness
 5. **Termination**: Stops when changes fall below threshold

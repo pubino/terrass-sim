@@ -1,0 +1,12 @@
+{
+  "name": "terrass-sim",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "eslint web && tsc && echo 'JavaScript checks passed.'"
+  },
+  "devDependencies": {
+    "eslint": "9.39.2",
+    "typescript": "5.9.3"
+  }
+}

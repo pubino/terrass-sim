@@ -1,0 +1,29 @@
+services:
+  preview:
+    build:
+      context: .
+      target: preview
+    ports:
+      - "127.0.0.1:${PREVIEW_PORT:-8000}:8000"
+  test:
+    build:
+      context: .
+      target: test
+    command:
+      - /bin/bash
+      - -euo
+      - pipefail
+      - -c
+      - |
+        ruff check web scripts tests
+        ruff format --check web scripts tests
+        mypy
+        python scripts/build_site.py
+        python -m unittest discover -s tests -v
+    volumes:
+      - ./build:/workspace/build
+    shm_size: 256m
+  js-check:
+    build:
+      context: .
+      target: js-check

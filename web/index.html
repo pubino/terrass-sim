@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Territory Assignment</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow"><a href="https://pubino.github.io/vanderbei-apps/#terrass-sim">Vanderbei’s applications</a> · Princeton University</p>
+      <h1>Territory Assignment</h1>
+      <p class="intro">Group ZIP codes into territories. Adjust the trade-off between balanced weights and shorter distances to territory centers.</p>
+    </header>
+    <section class="panel" aria-labelledby="map-title">
+      <h2 id="map-title">Territory map</h2>
+      <div class="workspace">
+        <div class="map-column">
+          <canvas id="map" width="840" height="640" role="img" aria-label="ZIP code locations colored by assigned territory"></canvas>
+          <label class="field" for="highlight">Highlight territory
+            <select id="highlight" disabled><option value="">All territories</option></select>
+          </label>
+          <p id="selection" class="hint" hidden></p>
+        </div>
+        <div>
+          <form id="settings">
+            <fieldset id="inputs">
+              <legend>Optimization settings</legend>
+              <div class="fields">
+                <label class="field">Territories<input type="number" name="count" min="1" max="100000" step="1" value="500" required></label>
+                <label class="field">Seed<input type="number" name="seed" min="-2147483648" max="2147483647" step="1" value="524" required></label>
+              </div>
+              <label class="field">ZIP data
+                <select id="source">
+                  <option value="historical">Historical Princeton data</option>
+                  <option value="custom">Load local files</option>
+                </select>
+              </label>
+              <div id="files" hidden>
+                <label class="field">ZIP locations (zlls.dat)<input type="file" id="locations" accept=".dat,.txt"></label>
+                <label class="field">ZIP weights (zta.dat)<input type="file" id="weights" accept=".dat,.txt"></label>
+                <label class="field">Adjacency (optional arcs.dat)<input type="file" id="arcs" accept=".dat,.txt"></label>
+                <p class="hint">Without an adjacency file, the solver builds the network from the ZIP locations.</p>
+              </div>
+              <label id="rebuild-label" class="checkbox"><input id="rebuild" type="checkbox">Rebuild adjacency from ZIPs</label>
+              <details>
+                <summary>Bias and geographic bounds</summary>
+                <div class="fields">
+                  <label class="field">Bias start<input type="number" name="bias_start" min="0.000000001" step="any" value="500" required></label>
+                  <label class="field">Bias end<input type="number" name="bias_end" min="0.000000001" step="any" value="100" required></label>
+                  <label class="field">Bias reduction<input type="number" name="reduction" min="1" step="any" value="2" required></label>
+                  <label class="field">Change fraction<input type="number" name="fraction" min="0" max="1" step="any" value="0" required></label>
+                  <label class="field">Minimum changes<input type="number" name="min_changes" min="0" max="1000000" step="1" value="0" required></label>
+                </div>
+                <div class="fields">
+                  <label class="field">Min latitude<input type="number" name="lat_min" min="-90" max="90" step="any" value="20" required></label>
+                  <label class="field">Max latitude<input type="number" name="lat_max" min="-90" max="90" step="any" value="60" required></label>
+                  <label class="field">Min longitude<input type="number" name="lon_min" min="-180" max="180" step="any" value="-130" required></label>
+                  <label class="field">Max longitude<input type="number" name="lon_max" min="-180" max="180" step="any" value="-60" required></label>
+                </div>
+              </details>
+            </fieldset>
+            <div class="actions">
+              <button type="submit" id="run">Optimize</button>
+              <button type="button" class="secondary" id="stop" disabled>Stop</button>
+            </div>
+          </form>
+          <p id="status" class="hint" role="status">Loading Python and the historical data…</p>
+          <p id="error" role="alert" hidden></p>
+        </div>
+      </div>
+    </section>
+    <section class="panel" id="results" aria-labelledby="stats-title" hidden>
+      <h2 id="stats-title">Assignment statistics</h2>
+      <dl class="facts">
+        <div><dt>ZIPs</dt><dd id="zip-count"></dd></div>
+        <div><dt>Territories</dt><dd id="territory-count"></dd></div>
+        <div><dt>Weighted average distance</dt><dd id="distance"></dd></div>
+        <div><dt>Territories over 10% from target</dt><dd id="over"></dd></div>
+        <div><dt>Maximum imbalance</dt><dd id="worst"></dd></div>
+        <div><dt>Geometric mean imbalance</dt><dd id="geometric"></dd></div>
+      </dl>
+    </section>
+    <footer>
+      <p>Based on Robert Vanderbei’s original Java application. Python runs in your browser via <a href="https://pyodide.org/">Pyodide</a>.
+        <a href="https://vanderbei.princeton.edu/JAVA/terrass/">Original Princeton applet</a> ·
+        <a href="https://github.com/pubino/terrass-sim">Project on GitHub</a></p>
+    </footer>
+  </main>
+</body>
+</html>

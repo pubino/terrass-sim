@@ -1,0 +1,10 @@
+.git
+.env*
+.venv
+.mypy_cache
+.ruff_cache
+node_modules
+build
+dist
+**/__pycache__
+*.db
